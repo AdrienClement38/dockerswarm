@@ -1,0 +1,89 @@
+version: '3.8'
+services:
+backend:
+image: flask-api:latest
+build:
+context: ./backend
+deploy:
+replicas: 3
+update_config:
+parallelism: 1
+delay: 10s
+restart_policy:
+condition: on-failure
+ports:
+- "5000:5000"
+environment:
+DB_HOST: db
+DB_NAME: flask_db
+DB_USER: postgres
+REDIS_HOST: redis
+secrets:
+- db_password
+networks:
+- backend
+depends_on:
+- db
+- redis
+db:
+image: postgres:16-alpine
+deploy:
+replicas: 1
+placement:
+constraints:
+- node.role == manager
+environment:
+POSTGRES_DB: flask_db
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+secrets:
+- db_password
+volumes:
+- db_data:/var/lib/postgresql/data
+networks:
+- backend
+# Script init SQL
+command: >
+sh -c "
+docker-entrypoint.sh postgres &
+sleep 10 &&
+PGPASSWORD=$$(cat /run/secrets/db_password) psql -U postgres -d flask_db -c '
+CREATE TABLE IF NOT EXISTS items (
+id SERIAL PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+description TEXT,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+INSERT INTO items (name, description) VALUES
+(''Sample Item 1'', ''This is a sample item''),
+(''Sample Item 2'', ''Another sample item''),
+(''Sample Item 3'', ''Yet another sample'')
+ON CONFLICT DO NOTHING;
+' || wait
+"
+redis:
+image: redis:7-alpine
+deploy:
+replicas: 2
+networks:
+- backend
+frontend:
+image: flask-frontend:latest
+build:
+context: ./frontend
+deploy:
+replicas: 2
+ports:
+- "8080:80"
+networks:
+- frontend
+networks:
+backend:
+driver: overlay
+frontend:
+driver: overlay
+volumes:
+db_data:
+secrets:
+db_password:
+external: true
