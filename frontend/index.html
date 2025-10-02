@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    Étape 6 : Frontend - app.js
     <title>Flask Swarm App</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto;
-            padding: 20px; }
-        .item { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px;
-        }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px;
-            cursor: pointer; border-radius: 5px; }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .item { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
         button:hover { background: #0056b3; }
-        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid
-        #ddd; border-radius: 5px; }
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
     </style>
 </head>
 <body>
 <h1>Items Manager</h1>
+
 <div>
     <h2>Add Item</h2>
     <input type="text" id="itemName" placeholder="Name">
     <textarea id="itemDescription" placeholder="Description"></textarea>
     <button onclick="addItem()">Add Item</button>
 </div>
+
 <div>
     <h2>Items List</h2>
     <div id="items"></div>
     <button onclick="loadItems()">Refresh</button>
 </div>
+
 <script src="app.js"></script>
 </body>
 </html>
