@@ -66,3 +66,23 @@ Quitter avec :
 7. Tester
 
 API Healthcheck → http://localhost:5000/health
+API Items → http://localhost:5000/api/items
+Frontend → http://localhost:8080
+
+8. Commandes utiles
+
+Vérifier les tâches :
+docker stack ps flaskapp
+
+Voir les logs du backend :
+docker service logs flaskapp_backend
+
+Scaler le backend :
+docker service scale flaskapp_backend=5
+
+Rolling update (après rebuild du backend) :
+docker build -t flask-api:latest ./backend
+docker service update --image flask-api:latest flaskapp_backend
+
+Supprimer la stack :
+docker stack rm flaskapp
